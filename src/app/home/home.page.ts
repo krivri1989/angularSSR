@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -7,47 +8,57 @@ import { Meta, Title } from '@angular/platform-browser';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  constructor(private titleService: Title, private metaService: Meta) {}
+  url = 'https://jsonplaceholder.typicode.com/todos/1';
+  imgUrl = 'https://dummyimage.com/300';
+  data: any;
+  constructor(
+    private titleService: Title,
+    private metaService: Meta,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
-    this.titleService.setTitle('Devdactic SSR');
-    this.metaService.updateTag({
-      name: 'description',
-      content: 'The Devdactic SSR Page',
-    });
-    // Twitter
-    this.metaService.updateTag({
-      property: 'twitter:card',
-      content: 'summary_large_image',
-    });
-    this.metaService.updateTag({
-      property: 'twitter:title',
-      content: 'NEW ARTICLE OUT NOW',
-    });
-    this.metaService.updateTag({
-      property: 'twitter:description',
-      content: 'Check out this cool article',
-    });
-    this.metaService.updateTag({
-      property: 'twitter:image',
-      content:
-        'https://i0.wp.com/devdactic.com/wp-content/uploads/2020/05/ionic-in-app-purchase-capacitor.png?w=1620&ssl=1',
-    });
-    // Facebook
-    this.metaService.updateTag({ property: 'og:url', content: '/second' });
-    this.metaService.updateTag({ property: 'og:type', content: 'website' });
-    this.metaService.updateTag({
-      property: 'og:description',
-      content: 'My Ionic SSR Page',
-    });
-    this.metaService.updateTag({
-      property: 'og:title',
-      content: 'My SSR Title!',
-    });
-    this.metaService.updateTag({
-      property: 'og:image',
-      content:
-        'https://i0.wp.com/devdactic.com/wp-content/uploads/2020/05/ionic-in-app-purchase-capacitor.png?w=1620&ssl=1',
+    this.http.get(this.url).subscribe((data: any) => {
+      console.log(data.title);
+      this.data = data;
+      this.titleService.setTitle(this.data.title);
+
+      this.metaService.updateTag({
+        name: 'description',
+        content: this.data.title,
+      });
+      // Twitter
+      this.metaService.updateTag({
+        property: 'twitter:card',
+        content: 'summary_large_image',
+      });
+      this.metaService.updateTag({
+        property: 'twitter:title',
+        content: 'NEW ARTICLE OUT NOW',
+      });
+      this.metaService.updateTag({
+        property: 'twitter:description',
+        content: this.data.title,
+      });
+      this.metaService.updateTag({
+        property: 'twitter:image',
+        content: this.imgUrl,
+      });
+      // Facebook
+      this.metaService.updateTag({ property: 'og:url', content: '/second' });
+      this.metaService.updateTag({ property: 'og:type', content: 'website' });
+      this.metaService.updateTag({
+        property: 'og:description',
+        content: this.data.title,
+      });
+      this.metaService.updateTag({
+        property: 'og:title',
+        content: this.data.completed,
+      });
+      this.metaService.updateTag({
+        property: 'og:image',
+        content: this.imgUrl,
+      });
     });
   }
 }
